@@ -9,6 +9,11 @@
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    .border-bottom {
+      border-bottom: 3px solid #DEE2F2 !important;
+    }
+  </style>
 </head>
 
 <!-- added now -->
@@ -91,10 +96,10 @@
   <div class="row col-md-12 p-3 justify-content-center bg-light m-0">
     <div class="bg-white col-md-5 rounded">
       <ul style="list-style:none;max-height: 70vh;" id="ulList" class="p-0 m-0 overflow-auto">
-        <!--         <li class="col-sm-12 d-flex justify-content-around p-0">
-          <div class="col-sm-2 p-0"><i>Iteam</i>:</div>
-          <div class="col-sm-6 flex-wrap p-0 text-break">AppleAppleAppleAppleAppleAppleAppleAppleAppleAppleAppleApple,</div>
-          <div class="col-sm-2 p-0"><i>Cost:</i></div>
+        <!-- <li class="col-sm-12 d-flex justify-content-around p-0 border-bottom my-1">
+          <div class="col-sm-2 p-0 text-break">text- t morning</div>
+          <div class="col-sm-6 flex-wrap p-0 text-break">AppleAppleAppleAppleAppleAppleAppleAppleAppleAppleAppleApple,
+          </div>
           <div class="col-sm-2 p-0">20</div>
         </li> -->
       </ul>
@@ -139,6 +144,8 @@
     // let c = writeUserData('123456', 'khizar', 'khizarsas', 'sdfcsdfsfws')
     // setTimeout((() => { console.log(c) }), 3000)
     function InsertUserEntry(saamaan, paisa) {
+
+      return new Promise((resolve, reject) => {
       set(ref(db, `${name}/` + Date().slice(4, -31).split(' ').join('')), {
         iteam: saamaan,
         price: paisa,
@@ -146,9 +153,13 @@
       })
         .then(() => {
           console.log("Enter Record");
+          resolve({status:'succesful'})
+          // return {status:'Sucessful'}
         })
-        .catch((error) => { console.log(error) })
-      console.log()
+        .catch((error) => { resolve({status:'succesful',error:error})})
+      // console.log()
+    })
+    
     }
 
     $(document).ready(function () {
@@ -158,24 +169,26 @@
     });
     $('#EnterDetailOfUser').click(() => {
       name = $('#EnterName').val()
+      // name.toLowerCase() = $('#EnterName').val()
       if (name == '') {
         $('#entername').modal('show');
       } else {
-        console.log(name)
+        name = name.toLowerCase().trim()
+        // console.log(name.length)
         get_data()
         $('#entername').modal('hide');
       }
     })
     $('#Paisa').focusin(() => {
       document.getElementById('Paisa').value = ''
-      console.log('at focus in', $('#Paisa').val())
+      // console.log('at focus in', $('#Paisa').val())
     })
     $('#Paisa').focusout(() => {
       if ($('#Paisa').val() == 0) {
-        console.log('at focus out', $('#Paisa').val())
+        // console.log('at focus out', $('#Paisa').val())
         document.getElementById('Paisa').value = 0
       } else {
-        console.log('gshdysv', $('#Paisa').val().length)
+        // console.log('gshdysv', $('#Paisa').val().length)
       }
     })
     $('#SaamanName').focusin(() => {
@@ -186,15 +199,21 @@
         document.getElementById('SaamanName').value = 'null'
       }
     })
-    $('#EnterDetails').click(() => {
+    $('#EnterDetails').click(async() => {
       // console.log('kjsgdhvbfh', $('#SaamanName').val(), $('#Paisa').val())
-      let tempContent = `<li class="d-flex justify-content-around"> <div class="p-0">Iteam:</div> <div class="p-0">${$('#SaamanName').val()},</div> <div class="p-0">Cost:</div> <div class="p-0">${$('#Paisa').val()}</div></li>`
+      // let tempContent = `<li class="d-flex justify-content-around"> <div class="p-0">Iteam:</div> <div class="p-0">${$('#SaamanName').val()},</div> <div class="p-0">Cost:</div> <div class="p-0">${$('#Paisa').val()}</div></li>`
       // `<li>${$('#SaamanName').val()},${$('#Paisa').val()}`;
       if ($('#SaamanName').val() == 'null' || $('#Paisa').val() == 0) {
-        console.log('sahi se kar entry', name)
+        // console.log('sahi se kar entry', name)
+        alert('Enter Correct Value')
       } else {
-        InsertUserEntry($('#SaamanName').val(), $('#Paisa').val())
-        document.getElementById('ulList').innerHTML += tempContent
+        let result = await  InsertUserEntry($('#SaamanName').val(), $('#Paisa').val())
+        // document.getElementById('ulList').innerHTML += tempContent
+        if(result.status == 'succesful'){
+          get_data() 
+        }else{
+          alert('Not Inserted'+result.error)
+        }
         $('#myModal').modal('hide');
       }
     })
@@ -208,11 +227,11 @@
           let obj = snapshot.val()
           for (let k in obj) {
             tempContent += `<li class="d-flex justify-content-around"> <div class="p-0">Iteam:</div> <div class="p-0">${obj[k].iteam},</div> <div class="p-0">Cost:</div> <div class="p-0">${obj[k].price}</div></li>`
-            console.log(obj[k])
+            // console.log(obj[k])
           }
-          document.getElementById('ulList').innerHTML += tempContent
+          document.getElementById('ulList').innerHTML = tempContent
         } else {
-          console.log('not found')
+          alert('Pervious Record Not Found')
         }
       })
     }
@@ -222,13 +241,13 @@
         if ($('#Paisa').val() == 0 || $('#SaamanName').val() == 'null' || $('#SaamanName').val() == ' ') {
           alert('You pressed a "enter" key in somewhere');
         } else {
-          let tempContent = `<li class="d-flex justify-content-around"> <div class="p-0">Iteam:</div> <div class="p-0">${$('#SaamanName').val()},</div> <div class="p-0">Cost:</div> <div class="p-0">${$('#Paisa').val()}</div></li>`
+          // let tempContent = `<li class="d-flex justify-content-around"> <div class="p-0">Iteam:</div> <div class="p-0">${$('#SaamanName').val()},</div> <div class="p-0">Cost:</div> <div class="p-0">${$('#Paisa').val()}</div></li>`
           // `<li>${$('#SaamanName').val()},${$('#Paisa').val()}`;
           if ($('#SaamanName').val() == 'null' || $('#Paisa').val() == 0) {
             console.log('sahi se kar entry', name)
           } else {
             InsertUserEntry($('#SaamanName').val(), $('#Paisa').val())
-            document.getElementById('ulList').innerHTML += tempContent
+            // document.getElementById('ulList').innerHTML += tempContent
             $('#myModal').modal('hide');
           }
         }
