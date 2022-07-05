@@ -96,12 +96,12 @@
   <div class="row col-md-12 p-3 justify-content-center bg-light m-0">
     <div class="bg-white col-md-5 rounded">
       <ul style="list-style:none;max-height: 70vh;" id="ulList" class="p-0 m-0 overflow-auto">
-        <!-- <li class="col-sm-12 d-flex justify-content-around p-0 border-bottom my-1">
-          <div class="col-sm-2 p-0 text-break">text- t morning</div>
-          <div class="col-sm-6 flex-wrap p-0 text-break">AppleAppleAppleAppleAppleAppleAppleAppleAppleAppleAppleApple,
+        <li class="col-sm-12 d-flex justify-content-around p-0 border-bottom my-1" onclick="ItemDetails()">
+          <div class="col-sm-2 p-0 text-break">Timing</div>
+          <div class="col-sm-6 flex-wrap p-0 text-break">item
           </div>
-          <div class="col-sm-2 p-0">20</div>
-        </li> -->
+          <div class="col-sm-2 p-0">cost</div>
+        </li>
       </ul>
     </div>
   </div>
@@ -110,13 +110,8 @@
 
 
   <script type="module">
-    var name = 'null';
-    // Import the functions you need from the SDKs you need
+    var name = 'test',Data;
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.8.3/firebase-app.js";
-    // TODO: Add SDKs for Firebase products that you want to use
-    // https://firebase.google.com/docs/web/setup#available-libraries
-
-    // Your web app's Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyCoPj0DvjAp8SWzSdhYwhWNb1GxieXQIZw",
       authDomain: "hessab-dfb99.firebaseapp.com",
@@ -134,15 +129,6 @@
     const database = getDatabase();
     const db = getDatabase();
     const dbRef = ref(getDatabase());
-    // function writeUserData(userId, name, email, imageUrl) {
-    // return set(ref(db, 'users/' + userId), {
-    //   username: name,
-    //   email: email,
-    //   profile_picture: imageUrl
-    // });
-    // }
-    // let c = writeUserData('123456', 'khizar', 'khizarsas', 'sdfcsdfsfws')
-    // setTimeout((() => { console.log(c) }), 3000)
     function InsertUserEntry(saamaan, paisa) {
 
       return new Promise((resolve, reject) => {
@@ -165,12 +151,12 @@
     $(document).ready(function () {
       console.log('ready now')
       $('#entername').modal('show')
-
+      // get_data()
     });
     $('#EnterDetailOfUser').click(() => {
       name = $('#EnterName').val()
       // name.toLowerCase() = $('#EnterName').val()
-      if (name == '') {
+      if (name == '1') {
         $('#entername').modal('show');
       } else {
         name = name.toLowerCase().trim()
@@ -225,9 +211,12 @@
       get(child(dbRef, `${name}`)).then((snapshot) => {
         if (snapshot.exists()) {
           let obj = snapshot.val()
-          for (let k in obj) {
-            tempContent += `<li class="d-flex justify-content-around"> <div class="p-0">Iteam:</div> <div class="p-0">${obj[k].iteam},</div> <div class="p-0">Cost:</div> <div class="p-0">${obj[k].price}</div></li>`
-            // console.log(obj[k])
+          Data = obj
+          // console.log(obj,Data)
+          for (let k in obj) {// 'k' here represent the value of key's in the api.
+            tempContent += `<li class="col-sm-12 d-flex justify-content-around p-0 border-bottom my-1"><div class="col-sm-2 p-0 text-break">${obj[k].date}</div><div class="col-sm-6 flex-wrap p-0 text-break">${obj[k].iteam}</div><div class="col-sm-2 p-0">${obj[k].price}</div></li>`
+            // tempContent += `<li class="d-flex justify-content-around"> <div class="p-0">Iteam:</div> <div class="p-0">${obj[k].iteam},</div> <div class="p-0">Cost:</div> <div class="p-0">${obj[k].price}</div></li>`
+            // console.log(k)
           }
           document.getElementById('ulList').innerHTML = tempContent
         } else {
