@@ -23,10 +23,54 @@
   <!-- <div class="container"> -->
   <!-- <h2>Modal Example</h2> -->
   <!-- Button to Open the Modal -->
-  <button type="button" class="btn btn-primary" id="modalToggleButton" data-toggle="modal" data-target="#myModal">
-    Record
-  </button>
-  <!-- The Modal -->
+  <div class="col-md-12 d-flex justify-content-around row">
+    <button type="button" class="btn btn-primary" id="modalToggleButton" data-toggle="modal" data-target="#myModal">
+      Record
+    </button>
+    <button type="button" class="btn btn-primary" id="modalToggleButtonMoney" data-toggle="modal"
+      data-target="#myModalMoney">
+      Money Bhai
+    </button>
+  </div>
+
+
+
+  <div class="modal fade" id="myModalMoney" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Money Budget</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          money money money
+          <div class="moneyinput">
+            <div class="form-group">
+              <label for="">Mount</label>
+              <input type="text" value="1524" class="form-control" name="" id="" aria-describedby="helpId"
+                placeholder="">
+              <!-- <small id="helpId" class="form-text text-muted">Help text</small> -->
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+  <!-- The Modal Record -->
   <div class="modal" id="myModal" style="display: none;">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -110,7 +154,7 @@
 
 
   <script type="module">
-    var name = 'test',Data;
+    var name = 'khizar', Data;
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.8.3/firebase-app.js";
     const firebaseConfig = {
       apiKey: "AIzaSyCoPj0DvjAp8SWzSdhYwhWNb1GxieXQIZw",
@@ -132,26 +176,26 @@
     function InsertUserEntry(saamaan, paisa) {
 
       return new Promise((resolve, reject) => {
-      set(ref(db, `${name}/` + Date().slice(4, -31).split(' ').join('')), {
-        iteam: saamaan,
-        price: paisa,
-        date: Date().slice(0, 8)
-      })
-        .then(() => {
-          console.log("Enter Record");
-          resolve({status:'succesful'})
-          // return {status:'Sucessful'}
+        set(ref(db, `${name}/` + Date().slice(4, -31).split(' ').join('')), {
+          iteam: saamaan,
+          price: paisa,
+          date: Date().slice(0, 8)
         })
-        .catch((error) => { resolve({status:'succesful',error:error})})
-      // console.log()
-    })
-    
+          .then(() => {
+            console.log("Enter Record");
+            resolve({ status: 'succesful' })
+            // return {status:'Sucessful'}
+          })
+          .catch((error) => { resolve({ status: 'succesful', error: error }) })
+        // console.log()
+      })
+
     }
 
     $(document).ready(function () {
       console.log('ready now')
-      $('#entername').modal('show')
-      // get_data()
+      // $('#entername').modal('show')
+      get_data()
     });
     $('#EnterDetailOfUser').click(() => {
       name = $('#EnterName').val()
@@ -185,7 +229,7 @@
         document.getElementById('SaamanName').value = 'null'
       }
     })
-    $('#EnterDetails').click(async() => {
+    $('#EnterDetails').click(async () => {
       // console.log('kjsgdhvbfh', $('#SaamanName').val(), $('#Paisa').val())
       // let tempContent = `<li class="d-flex justify-content-around"> <div class="p-0">Iteam:</div> <div class="p-0">${$('#SaamanName').val()},</div> <div class="p-0">Cost:</div> <div class="p-0">${$('#Paisa').val()}</div></li>`
       // `<li>${$('#SaamanName').val()},${$('#Paisa').val()}`;
@@ -193,12 +237,12 @@
         // console.log('sahi se kar entry', name)
         alert('Enter Correct Value')
       } else {
-        let result = await  InsertUserEntry($('#SaamanName').val(), $('#Paisa').val())
+        let result = await InsertUserEntry($('#SaamanName').val(), $('#Paisa').val())
         // document.getElementById('ulList').innerHTML += tempContent
-        if(result.status == 'succesful'){
-          get_data() 
-        }else{
-          alert('Not Inserted'+result.error)
+        if (result.status == 'succesful') {
+          get_data()
+        } else {
+          alert('Not Inserted' + result.error)
         }
         $('#myModal').modal('hide');
       }
