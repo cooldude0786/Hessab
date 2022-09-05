@@ -1,3 +1,5 @@
+<!-- $ git push https://github.com/cooldude0786/Hessab.git
+ -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,6 +15,9 @@
     .border-bottom {
       border-bottom: 3px solid #DEE2F2 !important;
     }
+    .border-money {
+    border: 5px solid #dee2e6!important;
+}
   </style>
 </head>
 
@@ -49,15 +54,14 @@
           <div class="moneyinput">
             <div class="form-group">
               <label for="">Mount</label>
-              <input type="text" value="1524" class="form-control" name="" id="" aria-describedby="helpId"
-                placeholder="">
+              <input type="number" value="1524" class="form-control" id="moneyinputval">
               <!-- <small id="helpId" class="form-text text-muted">Help text</small> -->
             </div>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+          <button type="button" id="UpdateMoney" class="btn btn-primary">Save changes</button>
         </div>
       </div>
     </div>
@@ -148,13 +152,21 @@
         </li>
       </ul>
     </div>
+
+    <div id="moneyID" class=" text-break col-md-1 ">
+      <div class="align-items-center border-money d-flex h-100 p-1">
+
+        <div>dfhgbdhfdgnjtyfhjft</div>
+      </div>
+    </div>
+
   </div>
   <!-- <button id="butt">hiii</button> -->
   <!-- </div> -->
 
 
   <script type="module">
-    var name = 'khizar', Data;
+    var name = 'test', Data;
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.8.3/firebase-app.js";
     const firebaseConfig = {
       apiKey: "AIzaSyCoPj0DvjAp8SWzSdhYwhWNb1GxieXQIZw",
@@ -168,13 +180,13 @@
 
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
+    console.log('this is app',app)
     import { getDatabase, ref, set, get, child, update, remove }
       from "https://www.gstatic.com/firebasejs/9.8.3/firebase-database.js"
     const database = getDatabase();
     const db = getDatabase();
     const dbRef = ref(getDatabase());
     function InsertUserEntry(saamaan, paisa) {
-
       return new Promise((resolve, reject) => {
         set(ref(db, `${name}/` + Date().slice(4, -31).split(' ').join('')), {
           iteam: saamaan,
@@ -194,8 +206,8 @@
 
     $(document).ready(function () {
       console.log('ready now')
-      // $('#entername').modal('show')
-      get_data()
+      $('#entername').modal('show')
+      // get_data()
     });
     $('#EnterDetailOfUser').click(() => {
       name = $('#EnterName').val()
@@ -286,6 +298,35 @@
         }
       }
     });
+    $('#UpdateMoney').click(async () => {
+
+      let amount = document.getElementById('moneyinputval').value
+      console.log(amount, typeof amount, typeof parseInt(amount), typeof amount)
+      let myobj1 = {
+        123: { 121: '23erfdgerdtg' },
+        'Jul05202215:51:24': { date: 'Tue Jul ', iteam: ' 1111', price: '1212' }
+      }
+      // function call(id___) {
+      //   return new Promise((resolve, reject) => {
+      //     get(child(ref(database), `test/${id___}`)).then((snapshot) => {
+      //       if (snapshot.exists()) {
+      //         console.log("ID already exists in database")
+      //         resolve({ status: 'succesful' })
+      //       } else {
+      //         console.log("ID does not exist in database")
+      //         resolve({ status: 'not' })
+      //       }
+
+      //     })
+      //   })
+      // }
+      // for( let k in myobj1){
+      //   console.log('this is-->'+k)
+      //   let a = await call(k)
+      //   console.log(a)
+      // }
+      // the above function is to update the whole money_obj into the db by checking if id is their or nor
+    })
   </script>
 </body>
 
