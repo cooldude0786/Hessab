@@ -15,9 +15,10 @@
     .border-bottom {
       border-bottom: 3px solid #DEE2F2 !important;
     }
+
     .border-money {
-    border: 5px solid #dee2e6!important;
-}
+      border: 5px solid #dee2e6 !important;
+    }
   </style>
 </head>
 
@@ -37,14 +38,14 @@
       Money Bhai
     </button>
   </div>
+  <!-- Above button is to open reords -->
 
 
-
-  <div class="modal fade" id="myModalMoney" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="myModalMoney" tabindex="-1" aria-labelledby="MoneyModal" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Money Budget</h5>
+          <h5 class="modal-title" id="MoneyModal">Money Budget</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -66,11 +67,6 @@
       </div>
     </div>
   </div>
-
-
-
-
-
 
 
 
@@ -144,12 +140,19 @@
   <div class="row col-md-12 p-3 justify-content-center bg-light m-0">
     <div class="bg-white col-md-5 rounded">
       <ul style="list-style:none;max-height: 70vh;" id="ulList" class="p-0 m-0 overflow-auto">
-        <li class="col-sm-12 d-flex justify-content-around p-0 border-bottom my-1" onclick="ItemDetails()">
+        <li class="col-sm-12 d-flex justify-content-around p-0 border-bottom my-1">
           <div class="col-sm-2 p-0 text-break">Timing</div>
           <div class="col-sm-6 flex-wrap p-0 text-break">item
           </div>
           <div class="col-sm-2 p-0">cost</div>
         </li>
+
+        <li class="col-sm-12 d-flex justify-content-around p-0 border-bottom my-1">
+          <div class="col-sm-2 p-0 text-break">Fri Jul </div>
+          <div class="col-sm-6 flex-wrap p-0 text-break"> Auto to inorbit </div>
+          <div class="col-sm-2 p-0">140</div>
+        </li>
+
       </ul>
     </div>
 
@@ -180,11 +183,20 @@
 
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
-    console.log('this is app',app)
-    import { getDatabase, ref, set, get, child, update, remove }
+    // console.log('this is app', app)
+    import { getDatabase, ref, set, get, child, update, remove, onValue }
       from "https://www.gstatic.com/firebasejs/9.8.3/firebase-database.js"
+
     const database = getDatabase();
     const db = getDatabase();
+    const connectedRef = ref(db, ".info/connected");
+    onValue(connectedRef, (snap) => {
+      if (snap.val() === true) {
+        console.log("connected");
+      } else {
+        console.log("not connected");
+      }
+    });
     const dbRef = ref(getDatabase());
     function InsertUserEntry(saamaan, paisa) {
       return new Promise((resolve, reject) => {
@@ -205,8 +217,11 @@
     }
 
     $(document).ready(function () {
+
       console.log('ready now')
-      $('#entername').modal('show')
+      console.log('this is app', app, db)
+
+      // $('#entername').modal('show')
       // get_data()
     });
     $('#EnterDetailOfUser').click(() => {
@@ -274,7 +289,7 @@
             // tempContent += `<li class="d-flex justify-content-around"> <div class="p-0">Iteam:</div> <div class="p-0">${obj[k].iteam},</div> <div class="p-0">Cost:</div> <div class="p-0">${obj[k].price}</div></li>`
             // console.log(k)
           }
-          document.getElementById('ulList').innerHTML = tempContent
+          document.getElementById('ulList').innerHTML += tempContent
         } else {
           alert('Pervious Record Not Found')
         }
@@ -308,16 +323,20 @@
       }
       // function call(id___) {
       //   return new Promise((resolve, reject) => {
-      //     get(child(ref(database), `test/${id___}`)).then((snapshot) => {
-      //       if (snapshot.exists()) {
-      //         console.log("ID already exists in database")
-      //         resolve({ status: 'succesful' })
-      //       } else {
-      //         console.log("ID does not exist in database")
-      //         resolve({ status: 'not' })
-      //       }
+      get(child(ref(database), `khizar/moneyValue`)).then((snapshot) => {
+        if (snapshot.exists()) {
+          let moneyobj = snapshot.val()
+          // for(let keys in moneyobj){
+          //   console.log("value form-->",moneyobj[keys])
+          // }
+          console.log("Value from db if true", moneyobj[moneyobj.length - 1])
+          // resolve({ status: 'succesful' })
+        } else {
+          console.log("Value from db if false", snapshot)
+          // resolve({ status: 'not' })
+        }
 
-      //     })
+      })
       //   })
       // }
       // for( let k in myobj1){
