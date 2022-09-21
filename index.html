@@ -149,7 +149,7 @@
 
         <li class="col-sm-12 d-flex justify-content-around p-0 border-bottom my-1">
           <div class="col-sm-2 p-0 text-break">Fri Jul </div>
-          <div class="col-sm-6 flex-wrap p-0 text-break"> Auto to inorbit </div>
+          <div class="col-sm-6 flex-wrap p-0 text-break"> Auto to iasdfceeasnorbit </div>
           <div class="col-sm-2 p-0">140</div>
         </li>
 
@@ -157,9 +157,10 @@
     </div>
 
     <div id="moneyID" class=" text-break col-md-1 ">
-      <div class="align-items-center border-money d-flex h-100 p-1">
+      <div class="align-items-center border-money d-flex flex-wrap h-100 p-1">
 
-        <div>dfhgbdhfdgnjtyfhjft</div>
+        <div id="MoneyValue">dfhgbdhfdgnjtyfhjft</div>
+        <small class="text-muted">With faded secondary text</small>
       </div>
     </div>
 
@@ -169,7 +170,7 @@
 
 
   <script type="module">
-    var name = 'test', Data;
+    var name = 'khizar', Data;
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.8.3/firebase-app.js";
     const firebaseConfig = {
       apiKey: "AIzaSyCoPj0DvjAp8SWzSdhYwhWNb1GxieXQIZw",
@@ -193,6 +194,9 @@
     onValue(connectedRef, (snap) => {
       if (snap.val() === true) {
         console.log("connected");
+        // $('#entername').modal('show')
+        // get_data()
+        mOneyValue()
       } else {
         console.log("not connected");
       }
@@ -216,14 +220,6 @@
 
     }
 
-    $(document).ready(function () {
-
-      console.log('ready now')
-      console.log('this is app', app, db)
-
-      // $('#entername').modal('show')
-      // get_data()
-    });
     $('#EnterDetailOfUser').click(() => {
       name = $('#EnterName').val()
       // name.toLowerCase() = $('#EnterName').val()
@@ -279,7 +275,7 @@
     })
     function get_data() {
       let tempContent = '';
-      get(child(dbRef, `${name}`)).then((snapshot) => {
+      get(child(dbRef, `${name}/moneyValue/`)).then((snapshot) => {
         if (snapshot.exists()) {
           let obj = snapshot.val()
           Data = obj
@@ -313,8 +309,21 @@
         }
       }
     });
+    function mOneyValue() {
+      get(child(ref(database), `${name}/moneyValue`)).then((snapshot) => {
+        if (snapshot.exists()) {
+          let moneyobj = snapshot.val()
+          // for(let keys in moneyobj){
+          //   console.log("value form-->",moneyobj[keys])
+          // }
+          console.log("Value from db if true",moneyobj[moneyobj.length - 1])
+          updateMoneyValue(moneyobj[moneyobj.length - 1].Amount)
+        } else {
+          console.log("Value from db if false", snapshot)
+        }
+      })//get Close
+    }//Func Close
     $('#UpdateMoney').click(async () => {
-
       let amount = document.getElementById('moneyinputval').value
       console.log(amount, typeof amount, typeof parseInt(amount), typeof amount)
       let myobj1 = {
@@ -323,20 +332,6 @@
       }
       // function call(id___) {
       //   return new Promise((resolve, reject) => {
-      get(child(ref(database), `khizar/moneyValue`)).then((snapshot) => {
-        if (snapshot.exists()) {
-          let moneyobj = snapshot.val()
-          // for(let keys in moneyobj){
-          //   console.log("value form-->",moneyobj[keys])
-          // }
-          console.log("Value from db if true", moneyobj[moneyobj.length - 1])
-          // resolve({ status: 'succesful' })
-        } else {
-          console.log("Value from db if false", snapshot)
-          // resolve({ status: 'not' })
-        }
-
-      })
       //   })
       // }
       // for( let k in myobj1){
@@ -346,6 +341,9 @@
       // }
       // the above function is to update the whole money_obj into the db by checking if id is their or nor
     })
+    function updateMoneyValue(value_of_money){
+      $('#MoneyValue').text(value_of_money)
+    }
   </script>
 </body>
 
