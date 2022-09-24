@@ -15,16 +15,34 @@
     .border-bottom {
       border-bottom: 3px solid #DEE2F2 !important;
     }
+
     .border-money {
-    border: 5px solid #dee2e6!important;
-}
+      border: 5px solid #dee2e6 !important;
+    }
+
+    .screenLoader {
+      font-size: 30px;
+      font-family: monospace;
+      overflow: hidden;
+      /* height: -webkit-fill-available; */
+      max-height: 0;
+      background-color: #8d98a3;
+      width: 260px;
+      position: absolute;
+      top: 0;
+      left: calc(50% - 130px);
+      z-index: 1;
+      right: 50%;
+      transition: max-height .2s ease-out;
+    }
   </style>
 </head>
 
 <!-- added now -->
 
 <body>
-
+  <div id="ScreenLoadar" class="d-flex justify-content-center text-danger rounded-bottom screenLoader">Connecting....
+  </div>
   <!-- <div class="container"> -->
   <!-- <h2>Modal Example</h2> -->
   <!-- Button to Open the Modal -->
@@ -37,14 +55,14 @@
       Money Bhai
     </button>
   </div>
+  <!-- Above button is to open reords -->
 
 
-
-  <div class="modal fade" id="myModalMoney" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="myModalMoney" tabindex="-1" aria-labelledby="MoneyModal" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Money Budget</h5>
+          <h5 class="modal-title" id="MoneyModal">Money Budget</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -66,11 +84,6 @@
       </div>
     </div>
   </div>
-
-
-
-
-
 
 
 
@@ -144,19 +157,27 @@
   <div class="row col-md-12 p-3 justify-content-center bg-light m-0">
     <div class="bg-white col-md-5 rounded">
       <ul style="list-style:none;max-height: 70vh;" id="ulList" class="p-0 m-0 overflow-auto">
-        <li class="col-sm-12 d-flex justify-content-around p-0 border-bottom my-1" onclick="ItemDetails()">
+        <li class="col-sm-12 d-flex justify-content-around p-0 border-bottom my-1">
           <div class="col-sm-2 p-0 text-break">Timing</div>
           <div class="col-sm-6 flex-wrap p-0 text-break">item
           </div>
           <div class="col-sm-2 p-0">cost</div>
         </li>
+
+        <li class="col-sm-12 d-flex justify-content-around p-0 border-bottom my-1">
+          <div class="col-sm-2 p-0 text-break">Fri Jul </div>
+          <div class="col-sm-6 flex-wrap p-0 text-break"> Auto to iasdfceeasnorbit </div>
+          <div class="col-sm-2 p-0">140</div>
+        </li>
+
       </ul>
     </div>
 
     <div id="moneyID" class=" text-break col-md-1 ">
-      <div class="align-items-center border-money d-flex h-100 p-1">
+      <div class="align-items-center border-money d-flex flex-wrap h-100 p-1">
 
-        <div>dfhgbdhfdgnjtyfhjft</div>
+        <div id="MoneyValue">dfhgbdhfdgnjtyfhjft</div>
+        <small class="text-muted">With faded secondary text</small>
       </div>
     </div>
 
@@ -166,7 +187,26 @@
 
 
   <script type="module">
-    var name = 'test', Data;
+    var name = 'khizar', Data;
+    function LocalStorageName() {
+      if (localStorage.getItem("MyCustomer") === null) {
+        alert("naam daaal")
+      } else if (localStorage.MyCustomer.length == 0) {
+        alert("daala hai  par empty hai")
+      }
+      else {
+        if (
+          window.confirm(`Are you ${JSON.parse(localStorage.MyCustomer).id}`)
+        ){
+          alert("badhiya")
+        }else{
+          alert("array bhai bhai bhai")
+        }
+        
+      }
+    }
+    LocalStorageName()
+
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.8.3/firebase-app.js";
     const firebaseConfig = {
       apiKey: "AIzaSyCoPj0DvjAp8SWzSdhYwhWNb1GxieXQIZw",
@@ -180,11 +220,25 @@
 
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
-    console.log('this is app',app)
-    import { getDatabase, ref, set, get, child, update, remove }
+    // console.log('this is app', app)
+    import { getDatabase, ref, set, get, child, update, remove, onValue }
       from "https://www.gstatic.com/firebasejs/9.8.3/firebase-database.js"
+
     const database = getDatabase();
     const db = getDatabase();
+    const connectedRef = ref(db, ".info/connected");
+    onValue(connectedRef, (snap) => {
+      if (snap.val() === true) {
+        console.log("connected");
+        $("#ScreenLoadar").css("max-height", "");  //Loader 
+        // $('#entername').modal('show')
+        // get_data()
+        mOneyValue()
+      } else {
+        console.log("not connected");
+        $("#ScreenLoadar").css("max-height", "40px"); //Loader 
+      }
+    });
     const dbRef = ref(getDatabase());
     function InsertUserEntry(saamaan, paisa) {
       return new Promise((resolve, reject) => {
@@ -204,11 +258,6 @@
 
     }
 
-    $(document).ready(function () {
-      console.log('ready now')
-      $('#entername').modal('show')
-      // get_data()
-    });
     $('#EnterDetailOfUser').click(() => {
       name = $('#EnterName').val()
       // name.toLowerCase() = $('#EnterName').val()
@@ -264,7 +313,7 @@
     })
     function get_data() {
       let tempContent = '';
-      get(child(dbRef, `${name}`)).then((snapshot) => {
+      get(child(dbRef, `${name}/moneyValue/`)).then((snapshot) => {
         if (snapshot.exists()) {
           let obj = snapshot.val()
           Data = obj
@@ -274,7 +323,7 @@
             // tempContent += `<li class="d-flex justify-content-around"> <div class="p-0">Iteam:</div> <div class="p-0">${obj[k].iteam},</div> <div class="p-0">Cost:</div> <div class="p-0">${obj[k].price}</div></li>`
             // console.log(k)
           }
-          document.getElementById('ulList').innerHTML = tempContent
+          document.getElementById('ulList').innerHTML += tempContent
         } else {
           alert('Pervious Record Not Found')
         }
@@ -298,8 +347,21 @@
         }
       }
     });
+    function mOneyValue() {
+      get(child(ref(database), `${name}/moneyValue`)).then((snapshot) => {
+        if (snapshot.exists()) {
+          let moneyobj = snapshot.val()
+          // for(let keys in moneyobj){
+          //   console.log("value form-->",moneyobj[keys])
+          // }
+          console.log("Value from db if true", moneyobj[moneyobj.length - 1])
+          updateMoneyValue(moneyobj[moneyobj.length - 1].Amount)
+        } else {
+          console.log("Value from db if false", snapshot)
+        }
+      })//get Close
+    }//Func Close
     $('#UpdateMoney').click(async () => {
-
       let amount = document.getElementById('moneyinputval').value
       console.log(amount, typeof amount, typeof parseInt(amount), typeof amount)
       let myobj1 = {
@@ -308,16 +370,6 @@
       }
       // function call(id___) {
       //   return new Promise((resolve, reject) => {
-      //     get(child(ref(database), `test/${id___}`)).then((snapshot) => {
-      //       if (snapshot.exists()) {
-      //         console.log("ID already exists in database")
-      //         resolve({ status: 'succesful' })
-      //       } else {
-      //         console.log("ID does not exist in database")
-      //         resolve({ status: 'not' })
-      //       }
-
-      //     })
       //   })
       // }
       // for( let k in myobj1){
@@ -327,6 +379,9 @@
       // }
       // the above function is to update the whole money_obj into the db by checking if id is their or nor
     })
+    function updateMoneyValue(value_of_money) {
+      $('#MoneyValue').text(value_of_money)
+    }
   </script>
 </body>
 
